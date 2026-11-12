@@ -1,0 +1,1028 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Céu Duplo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Direção: céu noturno e papel de carta. Dourado para os símbolos, violeta para ações.
+   Tokens em :root (claro), redefinidos para o escuro com os três blocos da regra de temas. */
+:root {
+  --bg: #f5f1e8; --fg: #1c1830; --muted: #675f7e; --card: #fffdf7;
+  --line: #ddd3bf; --accent: #4b2fb8; --accent-fg: #ffffff; --gold: #9a6b1f; --ok: #2d7a57;
+  --sombra: 0 1px 0 rgba(28, 24, 48, 0.04);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d0b1a; --fg: #ebe6f7; --muted: #9b93b8; --card: #15122a;
+    --line: #2a2546; --accent: #a590ff; --accent-fg: #0d0b1a; --gold: #dcb062; --ok: #6fd0a0;
+    --sombra: 0 1px 0 rgba(0, 0, 0, 0.3);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d0b1a; --fg: #ebe6f7; --muted: #9b93b8; --card: #15122a;
+  --line: #2a2546; --accent: #a590ff; --accent-fg: #0d0b1a; --gold: #dcb062; --ok: #6fd0a0;
+  --sombra: 0 1px 0 rgba(0, 0, 0, 0.3);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); margin: 0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 15px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 18px 48px;
+}
+h1, h2, h3 { font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif; font-weight: 600; line-height: 1.15; margin: 0; text-wrap: balance; }
+h1 { font-size: 40px; letter-spacing: -0.01em; }
+h2 { font-size: 28px; }
+h3 { font-size: 21px; }
+p { margin: 0; }
+a { color: var(--accent); }
+.wrap { max-width: 720px; margin: 0 auto; display: grid; gap: 18px; min-width: 0; }
+.muted { color: var(--muted); font-size: 13.5px; }
+.rotulo { text-transform: uppercase; letter-spacing: 0.1em; font-size: 11px; color: var(--muted); font-weight: 600; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; box-shadow: var(--sombra); min-width: 0; }
+.cabeca { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.marca { display: grid; gap: 2px; min-width: 0; }
+.marca em { color: var(--gold); font-style: italic; }
+nav.menu { display: flex; gap: 4px; flex-wrap: wrap; }
+.aba {
+  appearance: none; border: 1px solid transparent; background: transparent; color: var(--muted);
+  border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 14px; cursor: pointer;
+}
+.aba:hover { color: var(--fg); }
+.aba[aria-current="page"] { background: var(--card); color: var(--fg); border-color: var(--line); }
+.hero { display: grid; gap: 14px; }
+.hero p.lead { font-size: 17px; color: var(--muted); max-width: 56ch; }
+.duas { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.duas .card { display: grid; gap: 8px; align-content: start; }
+.simbolo { font-size: 46px; line-height: 1; color: var(--gold); width: 68px; height: 68px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; flex: none; }
+.destaque-signo { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.texto { margin-top: 10px; }
+.grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); gap: 8px; }
+.grade button {
+  appearance: none; background: transparent; color: var(--fg); border: 1px solid var(--line);
+  border-radius: 10px; padding: 10px 6px; font: inherit; font-size: 13px; cursor: pointer; text-align: center;
+}
+.grade button[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.grade .s { display: block; font-size: 20px; color: var(--gold); }
+form { display: grid; gap: 12px; }
+.linha-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+label.campo { display: grid; gap: 4px; font-size: 13px; color: var(--muted); min-width: 0; }
+input, select {
+  font: inherit; font-size: 15px; color: var(--fg); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 9px; padding: 9px 11px; min-width: 0; width: 100%;
+}
+input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn {
+  appearance: none; border: 0; background: var(--accent); color: var(--accent-fg);
+  border-radius: 9px; padding: 10px 16px; font: inherit; font-weight: 600; cursor: pointer; justify-self: start;
+}
+.btn.fantasma { background: transparent; color: var(--fg); border: 1px solid var(--line); font-weight: 500; }
+.tabela { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.tabela td, .tabela th { text-align: left; padding: 9px 0; border-top: 1px solid var(--line); vertical-align: top; }
+.tabela tr:first-child td, .tabela tr:first-child th { border-top: 0; }
+.tabela th { color: var(--muted); font-weight: 500; width: 40%; }
+.tabela td.num { text-align: right; }
+.tabela-larga { overflow-x: auto; }
+.lista { margin: 0; padding-left: 18px; color: var(--muted); }
+.lista li { margin: 4px 0; }
+.medidor { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; margin: 10px 0 4px; }
+.medidor i { display: block; height: 100%; background: var(--gold); border-radius: 999px; }
+.grade-planos { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+.plano { display: grid; gap: 10px; align-content: start; }
+.plano.destaque { border-color: var(--accent); }
+.preco { font-family: "Cormorant Garamond", Georgia, serif; font-size: 30px; line-height: 1; }
+.selo { font-size: 12px; color: var(--ok); font-weight: 600; }
+.trava { display: grid; gap: 10px; justify-items: start; }
+.aviso { font-size: 13px; color: var(--muted); border-left: 2px solid var(--gold); padding-left: 12px; }
+.roda { width: 100%; max-width: 360px; height: auto; display: block; margin: 0 auto; }
+.roda text { fill: var(--fg); font-family: Inter, system-ui, sans-serif; }
+.sobre {
+  position: fixed; inset: 0; background: rgba(8, 6, 18, 0.66); display: grid; place-items: center;
+  padding: 16px; z-index: 20;
+}
+.sobre[hidden] { display: none !important; }
+.sobre .card { width: 100%; max-width: 420px; }
+#toast {
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  background: var(--fg); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; z-index: 30;
+  max-width: calc(100% - 32px);
+}
+#toast[hidden] { display: none !important; }
+.rodape { color: var(--muted); font-size: 12.5px; text-align: center; padding-top: 6px; }
+</style>
+
+<div class="wrap">
+  <header class="cabeca">
+    <div class="marca">
+      <h1>Céu <em>Duplo</em></h1>
+      <span class="muted">Astrologia ocidental e védica (jyotish) em um só lugar</span>
+    </div>
+    <nav class="menu" aria-label="Seções">
+      <button class="aba" data-ir="inicio">Início</button>
+      <button class="aba" data-ir="ocidental">Ocidental</button>
+      <button class="aba" data-ir="vedica">Védica</button>
+      <button class="aba" data-ir="horoscopo">Horóscopo</button>
+      <button class="aba" data-ir="compatibilidade">Compatibilidade</button>
+      <button class="aba" data-ir="planos">Planos</button>
+      <button class="aba" data-ir="sobre">Sobre</button>
+    </nav>
+  </header>
+  <main id="app" aria-live="polite"></main>
+  <p class="rodape">Cálculos aproximados para fins de entretenimento e autoconhecimento.</p>
+</div>
+
+<div id="sobre" class="sobre" hidden role="dialog" aria-modal="true" aria-labelledby="sobre-titulo">
+  <div class="card" id="sobre-conteudo"></div>
+</div>
+<div id="toast" hidden role="status"></div>
+
+<script>
+// Motor astrológico: posições aproximadas (elementos orbitais de Schlyter), Ascendente pelo tempo
+// sideral local, ayanamsa Lahiri, casas védicas (signo inteiro), nakshatras, Vimshottari,
+// navamsa (D9) e Ashtakoota. Precisão: Sol ~0,01°, planetas ~0,1–0,5°, Lua ~0,5–1°.
+const Astro = (() => {
+  const RAD = Math.PI / 180, DEG = 180 / Math.PI;
+  const mod = (x, m = 360) => ((x % m) + m) % m;
+  const S = Math.sin, C = Math.cos, T = Math.tan;
+  const sinD = x => S(x * RAD), cosD = x => C(x * RAD), tanD = x => T(x * RAD);
+  const atan2D = (y, x) => Math.atan2(y, x) * DEG;
+
+  const SIGNOS = ['Áries','Touro','Gêmeos','Câncer','Leão','Virgem','Libra','Escorpião','Sagitário','Capricórnio','Aquário','Peixes'];
+  const SIMBOLOS = ['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+  const NAKS = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha',
+    'Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha',
+    'Uttara Ashadha','Shravana','Dhanishta','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+  const NAK_SIZE = 360 / 27;
+  const PLANETAS = ['sun','moon','mercury','venus','mars','jupiter','saturn','uranus','neptune'];
+  const NOMES_PT = { sun:'Sol', moon:'Lua', mercury:'Mercúrio', venus:'Vênus', mars:'Marte', jupiter:'Júpiter',
+    saturn:'Saturno', uranus:'Urano', neptune:'Netuno', node:'Nodo Norte (Rahu)', ketu:'Nodo Sul (Ketu)' };
+
+  // Elementos orbitais: [valor em d=0, variação por dia]. d = dias desde 2000-01-01 0h UT.
+  const EL = {
+    sun:     { w: [282.9404, 4.70935e-5], e: [0.016709, -1.151e-9], M: [356.0470, 0.9856002585], a: [1, 0] },
+    mercury: { N: [48.3313, 3.24587e-5], i: [7.0047, 5.0e-8], w: [29.1241, 1.01444e-5], a: [0.387098, 0], e: [0.205635, 5.59e-10], M: [168.6562, 4.0923344368] },
+    venus:   { N: [76.6799, 2.46590e-5], i: [3.3946, 2.75e-8], w: [54.8910, 1.38374e-5], a: [0.723330, 0], e: [0.006773, -1.302e-9], M: [48.0052, 1.6021302244] },
+    mars:    { N: [49.5574, 2.11081e-5], i: [1.8497, -1.78e-8], w: [286.5016, 2.92961e-5], a: [1.523688, 0], e: [0.093405, 2.516e-9], M: [18.6021, 0.5240207766] },
+    jupiter: { N: [100.4542, 2.76854e-5], i: [1.3030, -1.557e-7], w: [273.8777, 1.64505e-5], a: [5.20256, 0], e: [0.048498, 4.469e-9], M: [19.8950, 0.0830853001] },
+    saturn:  { N: [113.6634, 2.38980e-5], i: [2.4886, -1.081e-7], w: [339.3939, 2.97661e-5], a: [9.55475, 0], e: [0.055546, -9.499e-9], M: [316.9670, 0.0334442282] },
+    uranus:  { N: [74.0005, 1.3978e-5], i: [0.7733, 1.9e-8], w: [96.6612, 3.0565e-5], a: [19.18171, -1.55e-8], e: [0.047318, 7.45e-9], M: [142.5905, 0.011725806] },
+    neptune: { N: [131.7806, 3.0173e-5], i: [1.7700, -2.55e-7], w: [272.8461, -6.027e-6], a: [30.05826, 3.313e-8], e: [0.008606, 2.15e-9], M: [260.2471, 0.005995147] },
+    moon:    { N: [125.1228, -0.0529538083], i: [5.1454, 0], w: [318.0634, 0.1643573223], a: [60.2666, 0], e: [0.054900, 0], M: [115.3654, 13.0649929509] }
+  };
+
+  function valores(nome, d) {
+    const o = {};
+    for (const k in EL[nome]) o[k] = EL[nome][k][0] + EL[nome][k][1] * d;
+    return o;
+  }
+
+  // Vetor (x,y,z) em UA. Para o Sol, é o vetor geocêntrico do Sol; para os planetas, heliocêntrico;
+  // para a Lua, geocêntrico.
+  function vetor(nome, d) {
+    const p = valores(nome, d);
+    const N = (p.N ?? 0) * RAD, i = (p.i ?? 0) * RAD, a = p.a ?? 1, e = p.e;
+    const Mr = mod(p.M) * RAD;
+    let E = Mr + e * S(Mr) * (1 + e * C(Mr));
+    for (let k = 0; k < 8; k++) E = E - (E - e * S(E) - Mr) / (1 - e * C(E));
+    const xv = a * (C(E) - e), yv = a * Math.sqrt(1 - e * e) * S(E);
+    const v = Math.atan2(yv, xv), r = Math.hypot(xv, yv);
+    const u = v + p.w * RAD;
+    return [
+      r * (C(N) * C(u) - S(N) * S(u) * C(i)),
+      r * (S(N) * C(u) + C(N) * S(u) * C(i)),
+      r * S(u) * S(i)
+    ];
+  }
+
+  // Longitude eclíptica geocêntrica (graus) de um corpo. A Lua recebe as principais perturbações.
+  function lonGeo(nome, d) {
+    if (nome === 'sun') { const s = vetor('sun', d); return mod(atan2D(s[1], s[0])); }
+    if (nome === 'moon') {
+      const m = vetor('moon', d);
+      const pm = valores('moon', d), ps = valores('sun', d);
+      const Ms = mod(ps.M), Mm = mod(pm.M), Ls = Ms + ps.w, Lm = pm.N + pm.w + pm.M;
+      const D = (Lm - Ls) * RAD, F = (Lm - pm.N) * RAD, Mmr = Mm * RAD, Msr = Ms * RAD;
+      const corr = -1.274 * S(Mmr - 2 * D) + 0.658 * S(2 * D) - 0.186 * S(Msr) - 0.059 * S(2 * Mmr - 2 * D)
+        - 0.057 * S(Mmr - 2 * D + Msr) + 0.053 * S(Mmr + 2 * D) + 0.046 * S(2 * D - Msr) + 0.041 * S(Mmr - Msr)
+        - 0.035 * S(D) - 0.031 * S(Mmr + Msr) - 0.015 * S(2 * F - 2 * D) + 0.011 * S(Mmr - 4 * D);
+      return mod(atan2D(m[1], m[0]) + corr);
+    }
+    const p = vetor(nome, d), s = vetor('sun', d);
+    return mod(atan2D(p[1] + s[1], p[0] + s[0]));
+  }
+
+  // Posições tropicais de todos os corpos + nodo lunar médio. Retrógrado = longitude diminui.
+  function posicoes(data) {
+    const d = dayNumber(data);
+    const out = {};
+    for (const n of PLANETAS) {
+      const a = lonGeo(n, d), b = lonGeo(n, d + 1);
+      const delta = ((b - a) % 360 + 540) % 360 - 180;
+      out[n] = { lon: a, retro: n !== 'sun' && n !== 'moon' && delta < 0 };
+    }
+    out.node = { lon: mod(125.1228 - 0.0529538083 * d), retro: true };
+    out.ketu = { lon: mod(out.node.lon + 180), retro: true };
+    return out;
+  }
+
+  function dayNumber(data) { return data.getTime() / 86400000 + 2440587.5 - 2451543.5; }
+  function julianDay(data) { return data.getTime() / 86400000 + 2440587.5; }
+
+  // Ayanamsa Lahiri (zodíaco sideral = tropical − ayanamsa)
+  function ayanamsa(data) { return 23.85306 + 0.013969 * (dayNumber(data) / 365.2422); }
+
+  // Ascendente e Meio do Céu (tropicais). lat/lon em graus; lon leste positiva.
+  function ascMc(data, lat, lon) {
+    const jd = julianDay(data), d = dayNumber(data);
+    const gmst = mod(280.46061837 + 360.98564736629 * (jd - 2451545.0));
+    const ramc = mod(gmst + lon);
+    const eps = 23.4393 - 3.563e-7 * d;
+    const asc = mod(atan2D(cosD(ramc), -(sinD(ramc) * cosD(eps) + tanD(lat) * sinD(eps))));
+    const mc = mod(atan2D(sinD(ramc), cosD(ramc) * cosD(eps)));
+    return { asc, mc };
+  }
+
+  function signo(lon) {
+    const l = mod(lon), i = Math.floor(l / 30), g = l % 30;
+    return { i, nome: SIGNOS[i], sim: SIMBOLOS[i], grau: Math.floor(g), min: Math.floor((g % 1) * 60) };
+  }
+  function fmtGrau(lon) { const s = signo(lon); return `${s.grau}°${String(s.min).padStart(2, '0')}′`; }
+
+  // Casas iguais a partir do Ascendente (ocidental)
+  function casaIgual(lon, asc) { return Math.floor(mod(lon - asc) / 30) + 1; }
+  // Casas de signo inteiro a partir do Lagna (védico)
+  function casaSigno(lon, lagnaIdx) { return mod(signo(lon).i - lagnaIdx, 12) + 1; }
+
+  function nakshatra(sidLon) {
+    const i = Math.floor(sidLon / NAK_SIZE);
+    const frac = (sidLon % NAK_SIZE) / NAK_SIZE;
+    return { i, nome: NAKS[i], pada: Math.floor((sidLon % NAK_SIZE) / (NAK_SIZE / 4)) + 1, frac };
+  }
+
+  // Vimshottari: períodos de Mahadasha (com Antardasha) a partir do nascimento
+  const DASHA_ORDEM = ['Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury'];
+  const DASHA_ANOS = { Ketu:7, Venus:20, Sun:6, Moon:10, Mars:7, Rahu:18, Jupiter:16, Saturn:19, Mercury:17 };
+  const ANO_MS = 365.25 * 86400000;
+  function vimshottari(data, sidMoon) {
+    const nk = nakshatra(sidMoon);
+    const idx0 = nk.i % 9;
+    const lordAtual = DASHA_ORDEM[idx0];
+    const decorrido = DASHA_ANOS[lordAtual] * nk.frac;
+    const restante = DASHA_ANOS[lordAtual] - decorrido;
+    const t0 = data.getTime();
+    const mds = [];
+    let inicio = t0 - decorrido * ANO_MS;
+    for (let k = 0; k < 9; k++) {
+      const lord = DASHA_ORDEM[(idx0 + k) % 9];
+      const anos = k === 0 ? restante : DASHA_ANOS[lord];
+      const fim = inicio + (k === 0 ? (decorrido + restante) : DASHA_ANOS[lord]) * ANO_MS;
+      const total = DASHA_ANOS[lord] * ANO_MS;
+      const ads = [];
+      let t = inicio;
+      for (let j = 0; j < 9; j++) {
+        const al = DASHA_ORDEM[(idx0 + k + j) % 9];
+        const dur = DASHA_ANOS[lord] * DASHA_ANOS[al] / 120 * ANO_MS;
+        ads.push({ lord: al, inicio: new Date(t), fim: new Date(t + dur) });
+        t += dur;
+      }
+      mds.push({ lord, inicio: new Date(inicio), fim: new Date(fim), anos, ads });
+      inicio = fim;
+    }
+    return mds;
+  }
+
+  // Navamsa (D9): posição do planeta no mapa de 1/9 de cada signo
+  function navamsa(lon) {
+    const l = mod(lon), s = Math.floor(l / 30), parte = Math.floor((l % 30) / (10 / 3));
+    const modalidade = s % 3; // 0 móvel, 1 fixo, 2 duplo
+    const inicio = modalidade === 0 ? s : modalidade === 1 ? (s + 8) % 12 : (s + 4) % 12;
+    const i = (inicio + parte) % 12;
+    return { i, nome: SIGNOS[i], sim: SIMBOLOS[i] };
+  }
+
+  // Aspectos entre corpos (ocidentais)
+  const ASPECTOS = [['Conjunção', 0, 8], ['Sextil', 60, 5], ['Quadratura', 90, 7], ['Trígono', 120, 7], ['Oposição', 180, 8]];
+  function aspectos(pos, chaves) {
+    const out = [];
+    for (let i = 0; i < chaves.length; i++) for (let j = i + 1; j < chaves.length; j++) {
+      const a = chaves[i], b = chaves[j];
+      let sep = mod(pos[b].lon - pos[a].lon);
+      sep = Math.min(sep, 360 - sep);
+      for (const [nome, ang, orb] of ASPECTOS) {
+        const dev = Math.abs(sep - ang);
+        if (dev <= orb) out.push({ a, b, nome, orb: dev });
+      }
+    }
+    return out;
+  }
+
+  // Ashtakoota (compatibilidade védica, 36 pontos) a partir das longitudes sidéreas da Lua
+  const VARNA = [2,1,0,3,2,1,0,3,2,1,0,3];
+  const VASHYA = [0,0,1,2,3,1,1,4,1,0,1,2];
+  const GANA = { D: [0,4,6,7,12,14,16,21,26], M: [1,3,5,10,11,19,20,24,25], R: [2,8,9,13,15,17,18,22,23] };
+  const NADI = { A: [0,5,6,11,12,17,18,23,24], B: [1,4,7,10,13,16,19,22,25], C: [2,3,8,9,14,15,20,21,26] };
+  const YONI = ['Cavalo','Elefante','Cabra','Serpente','Serpente','Cão','Gato','Cabra','Gato','Rato','Rato','Vaca','Búfalo','Tigre','Búfalo','Tigre','Veado','Veado','Cão','Macaco','Mangusto','Macaco','Leão','Cavalo','Leão','Vaca','Elefante'];
+  const INIMIGOS_YONI = [['Cavalo','Búfalo'],['Elefante','Leão'],['Cabra','Macaco'],['Serpente','Mangusto'],['Cão','Veado'],['Gato','Rato'],['Tigre','Vaca']];
+  const REGENTE = ['Marte','Vênus','Mercúrio','Lua','Sol','Mercúrio','Vênus','Marte','Júpiter','Saturno','Saturno','Júpiter'];
+  const AMIGO = {
+    Sol: { F: ['Lua','Marte','Júpiter'], E: ['Vênus','Saturno'] },
+    Lua: { F: ['Sol','Mercúrio'], E: [] },
+    Marte: { F: ['Sol','Lua','Júpiter'], E: ['Mercúrio'] },
+    Mercúrio: { F: ['Sol','Vênus'], E: ['Lua'] },
+    Júpiter: { F: ['Sol','Lua','Marte'], E: ['Mercúrio','Vênus'] },
+    Vênus: { F: ['Mercúrio','Saturno'], E: ['Sol','Lua'] },
+    Saturno: { F: ['Mercúrio','Vênus'], E: ['Sol','Lua','Marte'] }
+  };
+  function relacao(a, b) {
+    if (a === b) return 'F';
+    if (AMIGO[a].F.includes(b)) return 'F';
+    if (AMIGO[a].E.includes(b)) return 'E';
+    return 'N';
+  }
+  function pontosGraha(a, b) {
+    const x = relacao(a, b), y = relacao(b, a);
+    if (x === 'F' && y === 'F') return 5;
+    if (x === 'E' && y === 'E') return 0;
+    if ((x === 'F' && y === 'N') || (x === 'N' && y === 'F')) return 4;
+    if (x === 'N' && y === 'N') return 3;
+    if ((x === 'N' && y === 'E') || (x === 'E' && y === 'N')) return 1;
+    return 0.5;
+  }
+  function kutaGana(n1, n2) {
+    const g = k => Object.keys(GANA).find(c => GANA[c].includes(k));
+    const a = g(n1), b = g(n2);
+    if (a === b) return 6;
+    if ((a === 'D' && b === 'M') || (a === 'M' && b === 'D')) return 5;
+    return 0;
+  }
+  function kutaNadi(n1, n2) {
+    const f = k => Object.keys(NADI).find(c => NADI[c].includes(k));
+    return f(n1) === f(n2) ? 0 : 8;
+  }
+  function kutaYoni(n1, n2) {
+    const a = YONI[n1], b = YONI[n2];
+    if (a === b) return 4;
+    if (INIMIGOS_YONI.some(([x, y]) => (x === a && y === b) || (x === b && y === a))) return 0;
+    return 2;
+  }
+  function kutaTara(n1, n2) {
+    const bom = r => ![3, 5, 7].includes(r);
+    const r1 = (((n2 - n1 + 27) % 27) + 1) % 9, r2 = (((n1 - n2 + 27) % 27) + 1) % 9;
+    return (bom(r1) ? 1.5 : 0) + (bom(r2) ? 1.5 : 0);
+  }
+  // Pares ruins de signos (2/12, 5/9, 6/8): a soma das distâncias é 14 e uma delas está na lista.
+  function kutaBhakoot(s1, s2) {
+    const d1 = ((s2 - s1 + 12) % 12) + 1, d2 = ((s1 - s2 + 12) % 12) + 1;
+    return [2, 5, 6, 8, 9, 12].includes(d1) && d1 + d2 === 14 ? 0 : 7;
+  }
+  function ashtakoota(lonA, lonB) {
+    const sA = signo(lonA).i, sB = signo(lonB).i;
+    const nA = nakshatra(mod(lonA)).i, nB = nakshatra(mod(lonB)).i;
+    const pl = s => REGENTE[s];
+    const kutas = [
+      { nome: 'Varna', max: 1, pts: VARNA[sA] >= VARNA[sB] ? 1 : 0 },
+      { nome: 'Vashya', max: 2, pts: VASHYA[sA] === VASHYA[sB] ? 2 : (VASHYA[sA] === 1 || VASHYA[sB] === 1 ? 1 : 0) },
+      { nome: 'Tara', max: 3, pts: kutaTara(nA, nB) },
+      { nome: 'Yoni', max: 4, pts: kutaYoni(nA, nB) },
+      { nome: 'Graha Maitri', max: 5, pts: pontosGraha(pl(sA), pl(sB)) },
+      { nome: 'Gana', max: 6, pts: kutaGana(nA, nB) },
+      { nome: 'Bhakoot', max: 7, pts: kutaBhakoot(sA, sB) },
+      { nome: 'Nadi', max: 8, pts: kutaNadi(nA, nB) }
+    ];
+    return { total: kutas.reduce((s, k) => s + k.pts, 0), max: 36, kutas };
+  }
+
+  // Início UTC a partir de data/hora locais com deslocamento em horas (ex.: -3 para Brasília)
+  function utcDe(dataStr, horaStr, offset) {
+    const [y, m, d] = dataStr.split('-').map(Number);
+    const [h, mi] = (horaStr || '12:00').split(':').map(Number);
+    return new Date(Date.UTC(y, m - 1, d, h - offset, mi));
+  }
+
+  return {
+    SIGNOS, SIMBOLOS, NAKS, NOMES_PT, PLANETAS, DASHA_ORDEM, DASHA_ANOS,
+    posicoes, ayanamsa, ascMc, signo, fmtGrau, casaIgual, casaSigno, nakshatra,
+    vimshottari, navamsa, aspectos, ashtakoota, utcDe, dayNumber, mod, REGENTE
+  };
+})();
+if (typeof module !== 'undefined') module.exports = Astro;
+// ---------- Constantes ----------
+const CIDADES = [
+  ['São Paulo', -23.55, -46.63, -3], ['Rio de Janeiro', -22.91, -43.17, -3], ['Belo Horizonte', -19.92, -43.94, -3],
+  ['Porto Alegre', -30.03, -51.23, -3], ['Recife', -8.05, -34.88, -3], ['Salvador', -12.97, -38.50, -3],
+  ['Lisboa', 38.72, -9.14, 0], ['Londres', 51.51, -0.13, 0], ['Nova York', 40.71, -74.01, -5],
+  ['Buenos Aires', -34.60, -58.38, -3], ['Mumbai', 19.08, 72.88, 5.5], ['Nova Délhi', 28.61, 77.21, 5.5]
+];
+
+const PLANOS = {
+  gratuito: { nome: 'Gratuito', preco: 'R$ 0', nivel: 0 },
+  plus: { nome: 'Plus', preco: 'R$ 29,90/mês', nivel: 1 },
+  premium: { nome: 'Premium', preco: 'R$ 59,90/mês', nivel: 2 }
+};
+
+// Plano mínimo para cada recurso.
+const EXIGE = {
+  diario: 'gratuito', planetas: 'plus', casas: 'plus', vedico: 'plus', dasha: 'plus', semanal: 'plus',
+  compat: 'plus', aspectos: 'plus', kutas: 'premium', antardasha: 'premium', navamsa: 'premium', transitos: 'premium'
+};
+
+const NOMES_PLANETAS = { sun:'Sol', moon:'Lua', mercury:'Mercúrio', venus:'Vênus', mars:'Marte', jupiter:'Júpiter',
+  saturn:'Saturno', uranus:'Urano', neptune:'Netuno', node:'Rahu (nodo norte)', ketu:'Ketu (nodo sul)' };
+const SIMBOLO_PLANETA = { sun:'☉', moon:'☽', mercury:'☿', venus:'♀', mars:'♂', jupiter:'♃', saturn:'♄',
+  uranus:'♅', neptune:'♆', node:'☊', ketu:'☋' };
+const PAGINAS = ['inicio', 'ocidental', 'vedica', 'horoscopo', 'compatibilidade', 'planos', 'sobre'];
+
+const CHAVE = 'celuDuplo.v1';
+let estado = carregar();
+estado.plano = PLANOS[estado.plano] ? estado.plano : 'gratuito';
+
+// ---------- Armazenamento (preferência do visualizador; tolerante a falhas) ----------
+function carregar() {
+  try { return JSON.parse(localStorage.getItem(CHAVE)) || {}; } catch (e) { return {}; }
+}
+function salvar() {
+  try { localStorage.setItem(CHAVE, JSON.stringify(estado)); } catch (e) {}
+}
+
+// ---------- Utilidades ----------
+function esc(s) { const t = document.createElement('div'); t.textContent = s == null ? '' : String(s); return t.innerHTML; }
+function pode(recurso) { return PLANOS[estado.plano].nivel >= PLANOS[EXIGE[recurso]].nivel; }
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.hidden = false;
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { t.hidden = true; }, 2600);
+}
+function trava(recurso, titulo, texto) {
+  return `<section class="card trava" aria-label="${esc(titulo)}">
+    <p class="rotulo">Recurso do plano ${PLANOS[EXIGE[recurso]].nome}</p>
+    <h3>${esc(titulo)}</h3>
+    <p class="muted">${esc(texto || 'Disponível a partir do plano ' + PLANOS[EXIGE[recurso]].nome + '.')}</p>
+    <button class="btn" data-act="planos">Ver planos</button>
+  </section>`;
+}
+
+// Monta o mapa completo a partir dos dados de nascimento salvos.
+function mapaDe(n) {
+  const tz = Number(n.tz), lat = Number(n.lat), lon = Number(n.lon);
+  const utc = Astro.utcDe(n.data, n.hora || '12:00', tz);
+  const pos = Astro.posicoes(utc);
+  const ay = Astro.ayanamsa(utc);
+  const am = Astro.ascMc(utc, lat, lon);
+  const sid = {};
+  for (const k of Astro.PLANETAS.concat(['node', 'ketu'])) sid[k] = Astro.mod(pos[k].lon - ay);
+  const lagnaSid = Astro.mod(am.asc - ay);
+  return {
+    utc, pos, ay, asc: am.asc, mc: am.mc, sid, lagnaSid,
+    lagnaIdx: Math.floor(lagnaSid / 30),
+    semHora: !n.hora,
+    dashas: Astro.vimshottari(utc, sid.moon)
+  };
+}
+
+// Índice do signo solar (ocidental, tropical) no momento do nascimento. Usa a mesma posição do mapa.
+function signoSolarDe(n) {
+  const utc = Astro.utcDe(n.data, n.hora || '12:00', Number(n.tz));
+  return Astro.signo(Astro.posicoes(utc).sun.lon).i;
+}
+
+// ---------- Navegação ----------
+function ir(pagina) {
+  if (!PAGINAS.includes(pagina)) pagina = 'inicio';
+  if (location.hash !== '#' + pagina) location.hash = pagina;
+  estado.pagina = pagina; salvar();
+  render();
+  window.scrollTo(0, 0);
+}
+function paginaAtual() {
+  const h = (location.hash || '').replace('#', '');
+  return PAGINAS.includes(h) ? h : (estado.pagina || 'inicio');
+}
+
+// ---------- Checkout (simulado) ----------
+function abrirCheckout(chave) {
+  const p = PLANOS[chave];
+  document.getElementById('sobre-conteudo').innerHTML = `
+    <p class="rotulo">Assinatura</p>
+    <h2 id="sobre-titulo" style="margin:6px 0">Plano ${p.nome}</h2>
+    <p class="preco" style="margin-bottom:10px">${p.preco}</p>
+    <p class="muted">Esta é uma assinatura de demonstração. Nenhuma cobrança real é feita.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
+      <button class="btn" data-act="confirmar" data-plano="${chave}">Confirmar (demonstração)</button>
+      <button class="btn fantasma" data-act="fechar">Cancelar</button>
+    </div>`;
+  document.getElementById('sobre').hidden = false;
+  const primeiro = document.querySelector('#sobre-conteudo .btn');
+  if (primeiro) primeiro.focus();
+}
+function fecharCheckout() { document.getElementById('sobre').hidden = true; }
+
+// ---------- Eventos ----------
+document.addEventListener('click', e => {
+  const ir_ = e.target.closest('[data-ir]');
+  if (ir_) { e.preventDefault(); ir(ir_.dataset.ir); return; }
+  const el = e.target.closest('[data-act]');
+  if (!el) return;
+  const act = el.dataset.act;
+  if (act === 'assinar') abrirCheckout(el.dataset.plano);
+  if (act === 'fechar') fecharCheckout();
+  if (act === 'confirmar') {
+    estado.plano = el.dataset.plano;
+    salvar(); fecharCheckout(); render();
+    toast('Plano ' + PLANOS[estado.plano].nome + ' ativado (demonstração)');
+  }
+  if (act === 'cancelar') {
+    estado.plano = 'gratuito';
+    salvar(); render();
+    toast('Você voltou para o plano Gratuito');
+  }
+  if (act === 'planos') ir('planos');
+  if (act === 'signo') { estado.signoVer = Number(el.dataset.i); salvar(); render(); }
+  if (act === 'editar') { estado.nasc = null; salvar(); render(); }
+  if (act === 'limpar-parceiro') { estado.parceiro = null; salvar(); render(); }
+});
+
+document.addEventListener('change', e => {
+  if (e.target.name === 'cidade') {
+    const f = e.target.form;
+    const [lat, lon, tz] = e.target.value.split('|');
+    f.lat.value = lat; f.lon.value = lon; f.tz.value = tz;
+  }
+});
+
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target;
+  const dados = new FormData(f);
+  if (f.id === 'form-nascimento') {
+    const data = String(dados.get('data') || '');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) { toast('Informe uma data válida'); return; }
+    estado.nasc = {
+      nome: String(dados.get('nome') || '').trim(),
+      data, hora: String(dados.get('hora') || ''),
+      lat: String(dados.get('lat') || '-23.55'), lon: String(dados.get('lon') || '-46.63'),
+      tz: String(dados.get('tz') || '-3'),
+      cidade: String(dados.get('cidade') || 'São Paulo')
+    };
+    estado.signoVer = undefined;
+    salvar(); render();
+    toast('Mapa calculado');
+  }
+  if (f.id === 'form-parceiro') {
+    const data = String(dados.get('data') || '');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) { toast('Informe uma data válida'); return; }
+    estado.parceiro = { data, hora: String(dados.get('hora') || '') };
+    salvar(); render();
+  }
+});
+
+document.getElementById('sobre').addEventListener('click', e => {
+  if (e.target.id === 'sobre') fecharCheckout();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') fecharCheckout();
+});
+window.addEventListener('hashchange', () => { estado.pagina = paginaAtual(); salvar(); render(); });
+// ---------- Textos de horóscopo (exemplos determinísticos: mesmo signo + período = mesmo texto) ----------
+const TEXTOS = {
+  amor: [
+    'Uma conversa franca pode abrir portas que o silêncio manteve fechadas.',
+    'Alguém próximo pede mais atenção do que demonstra. Ofereça presença.',
+    'Um gesto simples de carinho rende mais do que um grande plano.',
+    'Evite cobrar respostas hoje e deixe as coisas seguirem o próprio ritmo.'
+  ],
+  trabalho: [
+    'Organize as prioridades antes de aceitar novos compromissos.',
+    'Uma ideia antiga ganha força se você a apresentar com clareza.',
+    'Dia bom para revisar contas, prazos e promessas feitas.',
+    'Delegar uma tarefa hoje libera energia para o que realmente importa.'
+  ],
+  energia: [
+    'O corpo pede movimento; uma caminhada muda a forma de pensar.',
+    'Você está mais sensível do que de costume. Respeite esse sinal.',
+    'Boa disposição para começar algo novo, mesmo que pequeno.',
+    'Cansaço acumulado pede pausa antes de qualquer decisão grande.'
+  ],
+  conselho: [
+    'Escute mais do que opina e perceberá detalhes importantes.',
+    'Não tome decisões definitivas com pressa; o momento favorece a calma.',
+    'Pequenas correções agora evitam grandes ajustes depois.',
+    'Confie no que você já sabe e deixe de buscar aprovação externa.'
+  ]
+};
+const COMPAT_TEXTOS = {
+  alta: ['Há afinidade natural: vocês entendem o ritmo um do outro com pouco esforço.',
+    'Existe leveza na convivência e vontade de crescer juntos.',
+    'O desafio é não deixar a facilidade virar acomodação.'],
+  media: ['Há atração e diferenças que se completam quando existe diálogo.',
+    'A relação pede combinados claros sobre expectativas e espaço.',
+    'Com paciência, a conexão se aprofunda com o tempo.'],
+  baixa: ['As diferenças de temperamento pedem mais tradução mútua.',
+    'Respeitar limites e estilos distintos é a chave para essa relação funcionar.',
+    'Se houver interesse, comece com projetos pequenos e objetivos.']
+};
+const DASHA_PT = { Ketu: 'Ketu', Venus: 'Vênus', Sun: 'Sol', Moon: 'Lua', Mars: 'Marte', Rahu: 'Rahu',
+  Jupiter: 'Júpiter', Saturn: 'Saturno', Mercury: 'Mercúrio' };
+const ELEMENTO = ['Fogo','Terra','Ar','Água','Fogo','Terra','Ar','Água','Fogo','Terra','Ar','Água'];
+const MODALIDADE = ['Cardinal','Fixo','Mutável','Cardinal','Fixo','Mutável','Cardinal','Fixo','Mutável','Cardinal','Fixo','Mutável'];
+const PLANETAS_ASP = Astro.PLANETAS;
+
+function gerarTexto(idx, periodo, cats) {
+  return cats.map(c => {
+    const pool = TEXTOS[c];
+    return pool[hashTexto(idx + '|' + periodo + '|' + c) % pool.length];
+  }).join(' ');
+}
+function hashTexto(s) {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function chaveDia(d = new Date()) { return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+function chaveSemana(d = new Date()) { return 'sem-' + Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5 / 7); }
+function fmtDia(d) { return d.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function fmtMes(d) { return d.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }); }
+function fmtDadosNascimento(n) {
+  const cidade = n.cidade || 'Local informado';
+  return `${fmtDia(new Date(n.data + 'T12:00:00'))}${n.hora ? ' às ' + n.hora : ' (hora não informada)'} · ${esc(cidade)}`;
+}
+
+// ---------- Formulário de nascimento (compartilhado) ----------
+function formNascimento(titulo, texto) {
+  const n = estado.nasc || {};
+  const cidade = n.cidade || 'São Paulo';
+  const c = CIDADES.find(x => x[0] === cidade) || CIDADES[0];
+  const opts = CIDADES.map(([nome, la, lo, tz]) =>
+    `<option value="${la}|${lo}|${tz}" ${nome === c[0] ? 'selected' : ''}>${esc(nome)}</option>`).join('');
+  return `<section class="card">
+    <p class="rotulo">Dados de nascimento</p>
+    <h2 style="margin:6px 0 4px">${esc(titulo)}</h2>
+    <p class="muted" style="margin-bottom:14px">${esc(texto || 'Os dados ficam salvos somente neste navegador.')}</p>
+    <form id="form-nascimento">
+      <div class="linha-form">
+        <label class="campo">Nome (opcional)<input name="nome" autocomplete="given-name" value="${esc(n.nome || '')}"></label>
+        <label class="campo">Data de nascimento<input type="date" name="data" required value="${esc(n.data || '')}"></label>
+        <label class="campo">Hora (local, se souber)<input type="time" name="hora" value="${esc(n.hora || '')}"></label>
+      </div>
+      <div class="linha-form">
+        <label class="campo">Cidade<select name="cidade">${opts}</select></label>
+        <label class="campo">Latitude<input name="lat" inputmode="decimal" value="${esc(n.lat ?? c[1])}"></label>
+        <label class="campo">Longitude<input name="lon" inputmode="decimal" value="${esc(n.lon ?? c[2])}"></label>
+        <label class="campo">Fuso (UTC)<input name="tz" inputmode="decimal" value="${esc(n.tz ?? c[3])}"></label>
+      </div>
+      <button class="btn" type="submit">Calcular mapa</button>
+    </form>
+    <p class="aviso" style="margin-top:12px">Sem a hora, Ascendente e casas são aproximados (cálculo ao meio-dia local).</p>
+  </section>`;
+}
+
+// ---------- Roda ocidental (SVG) ----------
+function rodaSvg(m) {
+  const cx = 200, cy = 200, R = 186, rS = 150, rP = 112;
+  const ang = lon => (180 - (lon - m.asc)) * Math.PI / 180;
+  const pt = (lon, r) => [cx + r * Math.cos(ang(lon)), cy - r * Math.sin(ang(lon))];
+  let s = `<svg class="roda" viewBox="0 0 400 400" role="img" aria-label="Roda do mapa ocidental">`;
+  s += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="var(--line)" stroke-width="1.5"/>`;
+  s += `<circle cx="${cx}" cy="${cy}" r="${rS}" fill="none" stroke="var(--line)"/>`;
+  s += `<circle cx="${cx}" cy="${cy}" r="${rP}" fill="none" stroke="var(--line)" stroke-dasharray="2 4"/>`;
+  for (let i = 0; i < 12; i++) {
+    const [x1, y1] = pt(i * 30, rS), [x2, y2] = pt(i * 30, R);
+    s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--line)"/>`;
+    const [tx, ty] = pt(i * 30 + 15, (R + rS) / 2);
+    s += `<text x="${tx}" y="${ty}" font-size="15" text-anchor="middle" dominant-baseline="middle" style="fill:var(--gold)">${Astro.SIMBOLOS[i]}</text>`;
+  }
+  const [ax, ay] = pt(m.asc, rS + 4), [bx, by] = pt(m.asc, R + 10);
+  s += `<line x1="${cx}" y1="${cy}" x2="${ax}" y2="${ay}" stroke="var(--accent)" stroke-width="1.5"/>`;
+  s += `<text x="${bx}" y="${by}" font-size="11" text-anchor="middle" dominant-baseline="middle" style="fill:var(--accent)">AC</text>`;
+  for (const k of Astro.PLANETAS) {
+    const [x, y] = pt(m.pos[k].lon, rP);
+    s += `<text x="${x}" y="${y}" font-size="16" text-anchor="middle" dominant-baseline="middle" style="fill:var(--fg)" aria-label="${esc(NOMES_PLANETAS[k])}">${SIMBOLO_PLANETA[k]}</text>`;
+  }
+  return s + `</svg>`;
+}
+
+// ---------- Páginas ----------
+function pInicio() {
+  const tem = !!estado.nasc;
+  const resumo = tem ? (() => {
+    const idx = signoSolarDe(estado.nasc);
+    return `<section class="card">
+      <p class="rotulo">Seu signo solar</p>
+      <div class="destaque-signo" style="margin-top:8px">
+        <div class="simbolo" aria-hidden="true">${Astro.SIMBOLOS[idx]}</div>
+        <div><h3>${Astro.SIGNOS[idx]}</h3><p class="muted">${ELEMENTO[idx]} · ${MODALIDADE[idx]}</p></div>
+      </div>
+    </section>`;
+  })() : '';
+  return `
+    <section class="card hero">
+      <p class="rotulo">Duas leituras do mesmo céu</p>
+      <h2>Ocidente e Índia, lado a lado</h2>
+      <p class="lead">Na astrologia ocidental, os signos seguem as estações do ano. Na védica, seguem as constelações de fundo. Aqui você calcula as duas com os mesmos dados de nascimento.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" data-ir="ocidental">${tem ? 'Ver meu mapa ocidental' : 'Começar meu mapa'}</button>
+        <button class="btn fantasma" data-ir="planos">Ver planos</button>
+      </div>
+    </section>
+    <div class="duas">
+      <section class="card">
+        <p class="rotulo">Ocidental · tropical</p>
+        <h3>Signos pelas estações</h3>
+        <p class="muted">Sol, Lua e planetas nos signos tropicais, casas a partir do Ascendente e aspectos entre os corpos.</p>
+      </section>
+      <section class="card">
+        <p class="rotulo">Védica · sideral</p>
+        <h3>Jyotish com ayanamsa Lahiri</h3>
+        <p class="muted">Signos sidéreos, 27 nakshatras, casas de signo inteiro, dasha Vimshottari e os 36 gunas da compatibilidade.</p>
+      </section>
+    </div>
+    ${resumo}`;
+}
+
+function pOcidental() {
+  if (!estado.nasc) return formNascimento('Seu mapa ocidental');
+  const n = estado.nasc, m = mapaDe(n);
+  const S = Astro.signo(m.pos.sun.lon), L = Astro.signo(m.pos.moon.lon);
+  const A = Astro.signo(m.asc), MC = Astro.signo(m.mc);
+  const basico = `
+    <section class="card">
+      <p class="rotulo">Mapa de ${fmtDadosNascimento(n)}</p>
+      <dl class="tabela" style="margin-top:12px;display:block">
+        <div style="display:grid;grid-template-columns:40% 1fr;padding:9px 0;border-top:0"><dt class="muted">Sol</dt><dd style="margin:0">${S.sim} ${S.nome}, ${Astro.fmtGrau(m.pos.sun.lon)}</dd></div>
+        <div style="display:grid;grid-template-columns:40% 1fr;padding:9px 0;border-top:1px solid var(--line)"><dt class="muted">Lua</dt><dd style="margin:0">${L.sim} ${L.nome}, ${Astro.fmtGrau(m.pos.moon.lon)}</dd></div>
+        <div style="display:grid;grid-template-columns:40% 1fr;padding:9px 0;border-top:1px solid var(--line)"><dt class="muted">Ascendente</dt><dd style="margin:0">${A.sim} ${A.nome}, ${Astro.fmtGrau(m.asc)}</dd></div>
+        <div style="display:grid;grid-template-columns:40% 1fr;padding:9px 0;border-top:1px solid var(--line)"><dt class="muted">Meio do Céu</dt><dd style="margin:0">${MC.sim} ${MC.nome}, ${Astro.fmtGrau(m.mc)}</dd></div>
+      </dl>
+      ${m.semHora ? '<p class="aviso" style="margin-top:12px">Sem hora de nascimento: o Ascendente e as casas são aproximados.</p>' : ''}
+    </section>`;
+  if (!pode('planetas')) return basico + trava('planetas', 'Planetas, casas e roda', 'Posições de todos os planetas, casas e roda do mapa estão no plano Plus.');
+
+  const linhas = Astro.PLANETAS.map(k => {
+    const s = Astro.signo(m.pos[k].lon);
+    const casa = Astro.casaIgual(m.pos[k].lon, m.asc);
+    return `<tr><th scope="row">${SIMBOLO_PLANETA[k]} ${NOMES_PLANETAS[k]}</th>
+      <td class="num">${s.sim} ${s.nome} ${Astro.fmtGrau(m.pos[k].lon)}${m.pos[k].retro ? ' <span class="muted">℞</span>' : ''}</td>
+      <td class="num">Casa ${casa}</td></tr>`;
+  }).join('');
+  const tabela = `<section class="card">
+    <h3>Planetas e casas</h3>
+    <div class="tabela-larga" style="margin-top:8px"><table class="tabela"><tbody>${linhas}</tbody></table></div>
+    <p class="muted" style="margin-top:10px">℞ indica movimento retrógrado. Casas iguais, contadas a partir do Ascendente.</p>
+  </section>`;
+  const roda = `<section class="card"><h3>Roda do mapa</h3>${rodaSvg(m)}</section>`;
+
+  const asp = pode('aspectos') ? (() => {
+    const lista = Astro.aspectos(m.pos, Astro.PLANETAS).slice(0, 18);
+    return `<section class="card"><h3>Aspectos principais</h3>
+      ${lista.length ? `<ul class="lista" style="margin-top:8px">${lista.map(x => `<li>${NOMES_PLANETAS[x.a]} ${x.nome.toLowerCase()} ${NOMES_PLANETAS[x.b]} <span class="muted">(orbe ${x.orb.toFixed(1)}°)</span></li>`).join('')}</ul>` : '<p class="muted">Nenhum aspecto dentro das orbes.</p>'}
+    </section>`;
+  })() : trava('aspectos', 'Aspectos entre planetas', 'Conjunções, trígonos, quadraturas e outros aspectos estão no plano Plus.');
+
+  const transitos = pode('transitos') ? (() => {
+    const agora = Astro.posicoes(new Date());
+    const obj = {};
+    for (const k of Astro.PLANETAS) { obj['t_' + k] = { lon: agora[k].lon }; obj['n_' + k] = { lon: m.pos[k].lon }; }
+    const chaves = Object.keys(obj);
+    const lista = Astro.aspectos(obj, chaves).filter(x => x.a.startsWith('t_') && x.b.startsWith('n_') && x.orb <= 3);
+    return `<section class="card"><h3>Trânsitos de hoje sobre o seu mapa</h3>
+      ${lista.length ? `<ul class="lista" style="margin-top:8px">${lista.map(x => `<li>${NOMES_PLANETAS[x.a.slice(2)]} em trânsito ${x.nome.toLowerCase()} ${NOMES_PLANETAS[x.b.slice(2)]} natal</li>`).join('')}</ul>` : '<p class="muted">Nenhum trânsito exato (orbe até 3°) hoje.</p>'}
+      <p class="muted" style="margin-top:10px">Trânsitos mudam todos os dias; atualize a página para ver as posições do momento.</p>
+    </section>`;
+  })() : trava('transitos', 'Trânsitos atuais', 'Os trânsitos de hoje sobre o seu mapa natal são exclusivos do plano Premium.');
+
+  return basico + tabela + roda + asp + transitos;
+}
+
+function pVedica() {
+  if (!estado.nasc) return formNascimento('Seu mapa védico (jyotish)', 'Usa o zodíaco sideral com ayanamsa Lahiri e casas de signo inteiro.');
+  if (!pode('vedico')) return trava('vedico', 'Mapa védico (jyotish)', 'O mapa védico completo (lagna, rashi, nakshatra e casas) está no plano Plus.');
+  const n = estado.nasc, m = mapaDe(n);
+  const lagna = Astro.signo(m.lagnaSid);
+  const rashi = Astro.signo(m.sid.moon);
+  const nk = Astro.nakshatra(m.sid.moon);
+  const resumo = `<section class="card">
+    <p class="rotulo">Resumo védico · ${fmtDadosNascimento(n)}</p>
+    <table class="tabela" style="margin-top:10px"><tbody>
+      <tr><th scope="row">Lagna (Ascendente sideral)</th><td class="num">${lagna.sim} ${lagna.nome}, ${Astro.fmtGrau(m.lagnaSid)}</td></tr>
+      <tr><th scope="row">Rashi (signo lunar)</th><td class="num">${rashi.sim} ${rashi.nome}, ${Astro.fmtGrau(m.sid.moon)}</td></tr>
+      <tr><th scope="row">Nakshatra da Lua</th><td class="num">${esc(nk.nome)}, pada ${nk.pada}</td></tr>
+      <tr><th scope="row">Ayanamsa (Lahiri)</th><td class="num">${m.ay.toFixed(3)}°</td></tr>
+    </tbody></table>
+    ${m.semHora ? '<p class="aviso" style="margin-top:12px">Sem hora de nascimento, o Lagna é aproximado.</p>' : ''}
+  </section>`;
+
+  const planetas = `<section class="card"><h3>Planetas no zodíaco sideral</h3>
+    <div class="tabela-larga" style="margin-top:8px"><table class="tabela"><tbody>${
+      Astro.PLANETAS.concat(['node', 'ketu']).map(k => {
+        const s = Astro.signo(m.sid[k]);
+        const casa = Astro.casaSigno(m.sid[k], m.lagnaIdx);
+        return `<tr><th scope="row">${SIMBOLO_PLANETA[k]} ${NOMES_PLANETAS[k]}</th>
+          <td class="num">${s.sim} ${s.nome} ${Astro.fmtGrau(m.sid[k])}</td><td class="num">Casa ${casa}</td></tr>`;
+      }).join('')
+    }</tbody></table></div>
+    <p class="muted" style="margin-top:10px">Casas de signo inteiro: a casa 1 é o signo do Lagna. Rahu e Ketu usam os nodos médios.</p></section>`;
+
+  const dashaAgora = new Date();
+  const atual = m.dashas.find(md => md.inicio <= dashaAgora && dashaAgora < md.fim) || m.dashas[0];
+  const dasha = pode('dasha') ? (() => `<section class="card"><h3>Dasha Vimshottari</h3>
+      <p class="muted" style="margin-top:4px">Período atual: <strong style="color:var(--fg)">${DASHA_PT[atual.lord]}</strong>, até ${fmtMes(atual.fim)}.</p>
+      <div class="tabela-larga" style="margin-top:10px"><table class="tabela"><tbody>${
+        m.dashas.map(md => `<tr><th scope="row">${DASHA_PT[md.lord]}</th>
+          <td class="num">${fmtMes(md.inicio)} → ${fmtMes(md.fim)}</td>
+          <td class="num">${Astro.DASHA_ANOS[md.lord]} anos</td></tr>`).join('')
+      }</tbody></table></div>
+    </section>`)() : trava('dasha', 'Dasha Vimshottari', 'Os períodos de dasha (ciclo de 120 anos) estão no plano Plus.');
+
+  const antar = pode('antardasha') ? `<section class="card"><h3>Antardashas de ${DASHA_PT[atual.lord]}</h3>
+      <div class="tabela-larga" style="margin-top:10px"><table class="tabela"><tbody>${
+        atual.ads.map(ad => `<tr><th scope="row">${DASHA_PT[ad.lord]}</th>
+          <td class="num">${fmtMes(ad.inicio)} → ${fmtMes(ad.fim)}</td></tr>`).join('')
+      }</tbody></table></div></section>` : (pode('dasha') ? trava('antardasha', 'Antardashas', 'Os subperíodos (antardasha) estão no plano Premium.') : '');
+
+  const nav = pode('navamsa') ? `<section class="card"><h3>Navamsa (D9)</h3>
+      <p class="muted" style="margin-top:4px">O mapa divisional de casamento e maturidade. Cada signo é dividido em nove partes.</p>
+      <div class="tabela-larga" style="margin-top:10px"><table class="tabela"><tbody>${
+        Astro.PLANETAS.map(k => {
+          const v = Astro.navamsa(m.sid[k]);
+          return `<tr><th scope="row">${SIMBOLO_PLANETA[k]} ${NOMES_PLANETAS[k]}</th><td class="num">${v.sim} ${v.nome}</td></tr>`;
+        }).join('')
+      }</tbody></table></div></section>`
+    : trava('navamsa', 'Navamsa (D9)', 'O mapa divisional navamsa está no plano Premium.');
+
+  return resumo + planetas + dasha + antar + nav;
+}
+
+function pHoroscopo() {
+  if (!estado.nasc) return formNascimento('Seu signo e horóscopo', 'Calculamos seu signo solar a partir da data e da posição do Sol.');
+  const n = estado.nasc;
+  const idxUser = signoSolarDe(n);
+  const ver = estado.signoVer ?? idxUser;
+  const hoje = new Date();
+  const ay = Astro.ayanamsa(hoje);
+  const lunaHoje = Astro.nakshatra(Astro.mod(Astro.posicoes(hoje).moon.lon - ay));
+  const data = hoje.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const sem = pode('semanal')
+    ? `<section class="card"><p class="rotulo">Previsão da semana</p><p class="texto">${esc(gerarTexto(ver, chaveSemana(), ['amor', 'trabalho', 'conselho']))}</p></section>`
+    : trava('semanal', 'Previsão da semana', 'A previsão semanal está no plano Plus.');
+  return `
+    <section class="card">
+      <p class="rotulo">${esc(data)}</p>
+      <div class="destaque-signo" style="margin-top:10px">
+        <div class="simbolo" aria-hidden="true">${Astro.SIMBOLOS[ver]}</div>
+        <div>
+          <h2>${Astro.SIGNOS[ver]}</h2>
+          <p class="muted">${ELEMENTO[ver]} · ${MODALIDADE[ver]}${ver === idxUser ? ' · seu signo solar' : ''}</p>
+        </div>
+      </div>
+      <p class="texto">${esc(gerarTexto(ver, chaveDia(), ['energia', 'amor', 'trabalho', 'conselho']))}</p>
+      <p class="muted" style="margin-top:12px">Lua hoje em <strong style="color:var(--fg)">${esc(lunaHoje.nome)}</strong> (nakshatra védico, pada ${lunaHoje.pada}).</p>
+    </section>
+    ${sem}
+    <section class="card">
+      <p class="rotulo">Os 12 signos</p>
+      <div class="grade" style="margin-top:10px" role="group" aria-label="Escolha um signo">
+        ${Astro.SIGNOS.map((nome, i) => `<button data-act="signo" data-i="${i}" aria-pressed="${i === ver}"><span class="s" aria-hidden="true">${Astro.SIMBOLOS[i]}</span>${nome}</button>`).join('')}
+      </div>
+    </section>`;
+}
+
+function pCompat() {
+  if (!estado.nasc) return formNascimento('Compatibilidade', 'Primeiro, informe seus dados. Depois, a data da outra pessoa.');
+  if (!pode('compat')) return trava('compat', 'Compatibilidade', 'A compatibilidade entre signos está no plano Plus.');
+  const n = estado.nasc;
+  const p = estado.parceiro;
+  const formulario = `<section class="card">
+    <p class="rotulo">Pessoa comparada</p>
+    <h2 style="margin:6px 0 4px">Data de nascimento da outra pessoa</h2>
+    <p class="muted" style="margin-bottom:14px">Usamos a cidade e o fuso informados nos seus dados. Sem a hora, a Lua é aproximada.</p>
+    <form id="form-parceiro">
+      <div class="linha-form">
+        <label class="campo">Data<input type="date" name="data" required value="${esc(p?.data || '')}"></label>
+        <label class="campo">Hora (opcional)<input type="time" name="hora" value="${esc(p?.hora || '')}"></label>
+      </div>
+      <button class="btn" type="submit">Comparar</button>
+    </form>
+  </section>`;
+  if (!p) return formulario;
+
+  const mA = mapaDe(n);
+  const mB = mapaDe({ data: p.data, hora: p.hora, lat: n.lat, lon: n.lon, tz: n.tz });
+  const sA = signoSolarDe(n), sB = Astro.signo(mB.pos.sun.lon).i;
+  const elA = ELEMENTO[sA], elB = ELEMENTO[sB];
+  const mesmo = elA === elB;
+  const compl = [elA, elB].sort().join('-');
+  const bom = mesmo || ['Ar-Fogo', 'Água-Terra'].includes(compl) || ['Fogo-Ar', 'Terra-Água'].includes(compl);
+  const base = mesmo ? 84 : bom ? 80 : (elA === 'Ar' || elB === 'Ar' || elA === 'Terra' || elB === 'Terra') ? 66 : 56;
+  const score = base + (hashTexto(sA + '' + sB) % 9) - 4;
+  const faixa = score >= 75 ? 'alta' : score >= 60 ? 'media' : 'baixa';
+  const txt = COMPAT_TEXTOS[faixa][hashTexto(sA + sB + 'c') % 3];
+
+  const ashta = Astro.ashtakoota(mA.sid.moon, mB.sid.moon);
+  const pc = Math.round(ashta.total / 36 * 100);
+  const bloco = `
+    <section class="card">
+      <p class="rotulo">Signos solares</p>
+      <h2 style="margin:6px 0 4px">${Astro.SIMBOLOS[sA]} ${Astro.SIGNOS[sA]} + ${Astro.SIMBOLOS[sB]} ${Astro.SIGNOS[sB]}</h2>
+      <p class="muted">Afinidade ocidental estimada</p>
+      <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:40px;line-height:1.1;margin:4px 0">${score}%</p>
+      <div class="medidor" aria-hidden="true"><i style="width:${score}%"></i></div>
+      <p class="texto">${esc(txt)}</p>
+    </section>`;
+  const védico = `
+    <section class="card">
+      <p class="rotulo">Compatibilidade védica (ashtakoota)</p>
+      <h2 style="margin:6px 0 4px">${ashta.total} de 36 gunas</h2>
+      <p class="muted">Pontuação aproximada pelo mapa lunar: ${pc}% dos gunas.</p>
+      <div class="medidor" aria-hidden="true"><i style="width:${pc}%"></i></div>
+      ${pode('kutas') ? `<div class="tabela-larga" style="margin-top:12px"><table class="tabela"><tbody>${
+        ashta.kutas.map(k => `<tr><th scope="row">${k.nome}</th><td class="num">${k.pts} / ${k.max}</td></tr>`).join('')
+      }</tbody></table></div>` : `<p class="muted" style="margin-top:12px">O detalhamento dos 8 kutas está no plano Premium.</p>`}
+      <p class="aviso" style="margin-top:12px">Cálculo simplificado: Yoni, Vashya, Gana e Graha Maitri usam tabelas resumidas. Escolas diferentes pontuam de forma diferente.</p>
+    </section>`;
+  return bloco + védico + formulario + `<div style="display:flex;justify-content:flex-start"><button class="btn fantasma" data-act="limpar-parceiro">Comparar outra pessoa</button></div>`;
+}
+
+function pPlanos() {
+  const atual = estado.plano;
+  const cartao = (chave, itens, destaque) => {
+    const p = PLANOS[chave];
+    const tag = atual === chave ? `<span class="selo">Seu plano atual</span>` : '';
+    const botao = atual === chave ? '' :
+      (p.nivel > PLANOS[atual].nivel
+        ? `<button class="btn" data-act="assinar" data-plano="${chave}">Assinar ${p.nome}</button>`
+        : `<button class="btn fantasma" data-act="assinar" data-plano="${chave}">Mudar para ${p.nome}</button>`);
+    return `<article class="card plano ${destaque ? 'destaque' : ''}">
+      ${tag}
+      <p class="rotulo">${p.nome}</p>
+      <div class="preco">${p.preco}</div>
+      <ul class="lista">${itens.map(i => `<li>${i}</li>`).join('')}</ul>
+      ${botao}
+    </article>`;
+  };
+  return `
+    <section class="card">
+      <p class="rotulo">Planos</p>
+      <h2 style="margin:6px 0 4px">Escolha a profundidade do seu estudo</h2>
+      <p class="muted">Gratuito para começar. Plus abre os dois mapas. Premium acrescenta antardashas, navamsa, trânsitos e o detalhamento da compatibilidade.</p>
+    </section>
+    <div class="grade-planos">
+      ${cartao('gratuito', ['Signo solar e horóscopo do dia', 'Lua em nakshatra hoje', 'Explorar os 12 signos'], false)}
+      ${cartao('plus', ['Tudo do Gratuito', 'Mapa ocidental: planetas, casas, roda e aspectos', 'Mapa védico: lagna, rashi, nakshatra e casas', 'Dasha Vimshottari (mahadashas)', 'Horóscopo semanal', 'Compatibilidade: total de gunas'], true)}
+      ${cartao('premium', ['Tudo do Plus', 'Antardashas', 'Navamsa (D9)', 'Trânsitos atuais sobre o seu mapa', 'Detalhamento dos 8 kutas'], false)}
+    </div>
+    ${atual !== 'gratuito' ? `<div><button class="btn fantasma" data-act="cancelar">Voltar para o Gratuito</button></div>` : ''}
+    <p class="aviso">Modo de demonstração: as assinaturas são simuladas e nenhuma cobrança é feita. Cobrança real exige um provedor de pagamentos (por exemplo, Mercado Pago com Pix e cartão, ou Stripe) e um servidor que confirme a assinatura.</p>`;
+}
+
+function pSobre() {
+  return `
+    <section class="card">
+      <p class="rotulo">Sobre o site</p>
+      <h2 style="margin:6px 0 10px">Como os cálculos funcionam</h2>
+      <p class="muted">O Céu Duplo calcula as posições com elementos orbitais de Schlyter e um modelo lunar simplificado, sem efemérides de alta precisão. Os valores são bons para estudo e reflexão, não para decisões médicas, jurídicas ou financeiras.</p>
+    </section>
+    <section class="card">
+      <h3>Ocidental e védica</h3>
+      <ul class="lista" style="margin-top:10px">
+        <li><strong style="color:var(--fg)">Tropical (ocidental):</strong> os signos começam no equinócio de primavera e acompanham as estações.</li>
+        <li><strong style="color:var(--fg)">Sideral (védico):</strong> os signos são alinhados às constelações. A diferença é a ayanamsa Lahiri, cerca de 24,2° em 2026.</li>
+        <li><strong style="color:var(--fg)">Lagna:</strong> o Ascendente sideral. Define a casa 1 nas casas de signo inteiro.</li>
+        <li><strong style="color:var(--fg)">Nakshatra:</strong> uma de 27 mansões lunares de 13°20′ cada. Ruler e pada refinam a leitura.</li>
+        <li><strong style="color:var(--fg)">Vimshottari:</strong> ciclo de 120 anos que começa pelo nakshatra da Lua de nascimento.</li>
+        <li><strong style="color:var(--fg)">Navamsa (D9):</strong> divisão de cada signo em nove partes, usada na leitura de casamento e maturidade.</li>
+        <li><strong style="color:var(--fg)">Ashtakoota:</strong> 36 gunas somados em oito categorias, da compatibilidade tradicional.</li>
+      </ul>
+    </section>
+    <section class="card">
+      <h3>Limitações</h3>
+      <ul class="lista" style="margin-top:10px">
+        <li>A Lua tem erro de cerca de meio a um grau, o que pode mudar o nakshatra perto das fronteiras.</li>
+        <li>Sem a hora de nascimento, o Ascendente e as casas são aproximados.</li>
+        <li>Rahu e Ketu são os nodos médios, não os verdadeiros.</li>
+        <li>O ashtakoota usa tabelas simplificadas para Yoni, Vashya, Gana e Graha Maitri.</li>
+        <li>Os horóscopos são textos de exemplo escolhidos por signo e data, não previsões individuais.</li>
+        <li>Os dados ficam só neste navegador.</li>
+      </ul>
+    </section>`;
+}
+
+// ---------- Renderização ----------
+const PAGINAS_FN = {
+  inicio: pInicio, ocidental: pOcidental, vedica: pVedica, horoscopo: pHoroscopo,
+  compatibilidade: pCompat, planos: pPlanos, sobre: pSobre
+};
+function render() {
+  const p = paginaAtual();
+  document.querySelectorAll('[data-ir]').forEach(b => {
+    b.setAttribute('aria-current', b.dataset.ir === p ? 'page' : 'false');
+  });
+  document.getElementById('app').innerHTML = PAGINAS_FN[p]();
+}
+
+render();
+</script>
+
+</body></html>
